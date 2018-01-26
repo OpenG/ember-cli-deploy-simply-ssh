@@ -46,7 +46,7 @@ module.exports = {
         this.log("Uploading files:", {color: "green"});
         const files = context.gzippedFiles || context.distFiles;
         const distDir = path.join(process.cwd(), context.distDir);
-        return files.reduce((promise, file) => {
+        return files.filter((file) => !file.endsWith('.map')).reduce((promise, file) => {
           return promise.then(() => {
             const local = path.join(distDir, file);
             const remote = path.posix.join(context.releaseDir, file);
