@@ -44,7 +44,7 @@ module.exports = {
 
       upload(context) {
         this.log("Uploading files:", {color: "green"});
-        const files = context.gzippedFiles || context.distFiles;
+        const files = context.distFiles;
         const distDir = path.join(process.cwd(), context.distDir);
         return files.filter((file) => !file.endsWith('.map')).reduce((promise, file) => {
           return promise.then(() => {
@@ -126,7 +126,8 @@ module.exports = {
 
       _fetchRevisionsJson(context) {
         const revPath = path.posix.join(this.readConfig('dir'), 'releases', 'revisions.json');
-        return this._execCommand(context, "cat " + revPath).then((revisions) => {
+        const cmd = `(test -e ${revPath} || echo "[]" > ${revPath}) && cat ${revPath}`;
+        return this._execCommand(context, cmd).then((revisions) => {
           try {
             return this._normalizeRevisions(JSON.parse(revisions));
           } catch (e) {
